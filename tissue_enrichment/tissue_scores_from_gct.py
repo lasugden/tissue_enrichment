@@ -82,12 +82,16 @@ def save_transcripts(df: pd.DataFrame, path: str):
     df.to_csv(path, index=None)
 
 
-if __name__ == '__main__':
-    import os.path
-    df = read_gct(os.path.join(os.path.expanduser('~/Documents/Programs/tissue_enrichment/data'), 
-                               'GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_median_tpm.gct'))
+def process_raw(raw_path: str, save_path: str):
+    """Process raw data and save
+
+    Args:
+        raw_path (str): raw path to gct file
+        save_path (str): path to save data into, usually in data directory in tissue_enrichment repo
+    
+    """
+    df = read_gct(raw_path)
     df = tpm_levels_to_edge_weights(df)
     df = simplify_titles(df)
     df = combine_similar(df)
-    save_transcripts(df, os.path.join(os.path.expanduser('~/Documents/Programs/tissue_enrichment/data'), 
-                                      'gene_median_tpm.csv'))
+    save_transcripts(df, save_path)
