@@ -56,6 +56,21 @@ def simplify_titles(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def combine_similar(df: pd.DataFrame) -> pd.DataFrame:
+    """Combine overly similar tissues based on pre-analysis
+
+    Args:
+        df (pd.DataFrame): Input dataframe with simplified tissue names
+
+    Returns:
+        pd.DataFrame: Output dataframe with overly similar tissues combined
+
+    """
+    df['skin'] = df[['skin.sun_exposed', 'skin.not_sun_exposed']].mean(axis=1)
+    df = df.drop(columns=['skin.sun_exposed', 'skin.not_sun_exposed'])
+    return df
+
+
 def save_transcripts(df: pd.DataFrame, path: str):
     """Save outputs for efficient reading by backend
 
@@ -73,5 +88,6 @@ if __name__ == '__main__':
                                'GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_median_tpm.gct'))
     df = tpm_levels_to_edge_weights(df)
     df = simplify_titles(df)
+    df = combine_similar(df)
     save_transcripts(df, os.path.join(os.path.expanduser('~/Documents/Programs/tissue_enrichment/data'), 
                                       'gene_median_tpm.csv'))
