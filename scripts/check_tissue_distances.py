@@ -21,4 +21,4 @@ def tissue_umap_plot(save_path: str):
 
 
 if __name__ == '__main__':
-    # tissue_umap_plot('graphs/tissue_umap_2.pdf')
+    tissue_umap_plot('graphs/tissue_umap_2.pdf')
