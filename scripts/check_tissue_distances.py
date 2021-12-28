@@ -11,7 +11,7 @@ def tissue_umap_plot(save_path: str):
         save_path (str): location to save plot
     
     """
-    ts = tscores.load()
+    ts = tscores.load(combine_skin=False)
     reducer = umap.UMAP()
     embedding = reducer.fit_transform(ts.feature_matrix().transpose())
     plt.scatter(embedding[:, 0], embedding[:, 1])
