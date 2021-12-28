@@ -183,7 +183,7 @@ def confirm_y_testis_transcripts(ts: tscores.TissueScores) -> float:
 
 
 if __name__ == '__main__':
-    ts = tscores.load()
+    ts = tscores.load(alias=False)
     # compare_tissue_gene_dists(ts, 'graphs')
     # plot_best_lognorm_fits(ts, 'graphs')
     # compare_tissue_gene_dists_all(ts, 'graphs')
