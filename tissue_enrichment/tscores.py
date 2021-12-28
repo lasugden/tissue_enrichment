@@ -1,31 +1,46 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
+from typing import Iterable
 
 
-def load(path: str = 'data/gene_median_tpm.csv') -> TissueScores:
+def load(*args, **kwargs) -> TissueScores:
     """Load pre-computed edge weights
 
     Args:
         path (str, optional): Path to precomputed edge weights. Defaults to '../data/gene_median_tpm.csv'.
+        combine_skin (bool, optional): If True, combine two skin tissues as identified in pre-analysis
 
     Returns:
-        pd.DataFrame: Loaded dataframe
+        TissueScores: Loaded new instance of TissueScores class
     
     """
-    ts = TissueScores(path)
+    ts = TissueScores(*args, **kwargs)
     return ts
 
 
 class TissueScores():
-    def __init__(self, path: str = 'data/gene_median_tpm.csv'):
+    def __init__(self, 
+                 path: str = 'data/gene_median_tpm.csv', 
+                 combine_skin: bool = True,
+                 alias: bool = True):
         """Load in tissue scores/pre-computed edge weights
 
         Args:
             path (str, optional): Path to existing tissue scores. Defaults to 'data/gene_median_tpm.csv'.
+            combine_skin (bool, optional): If True, combine two skin tissues as identified in pre-analysis
+            alias (bool, optional): If True, load aliases. Defaults to True.
 
         """
-        self.df = df = pd.read_csv(path)
+        self.df = pd.read_csv(path)
+
+        if combine_skin:
+            self.df['skin'] = self.df[['skin.sun_exposed', 'skin.not_sun_exposed']].mean(axis=1)
+            self.df = self.df.drop(columns=['skin.sun_exposed', 'skin.not_sun_exposed'])
+
+        if alias:
+            pass
+
         self.df['description'] = self.df['description'].str.lower()
         self.gene_list = self.df['description'].values
         self.numeric_columns = self.df.select_dtypes(exclude='object').columns.drop('tot_tpm')
@@ -65,7 +80,7 @@ class TissueScores():
         """
         genes, _ = self.search(genes, raise_error=raise_error)
         assert len(genes) > 0, 'No genes found'
-        return 
+        return self.df.loc[self.df['description'].isin(genes), :].copy()
 
     def gene_weights(self, gene_weights: list[tuple[str, float]], raise_error: bool = False) -> pd.DataFrame:
         """Return a dataframe containing data only for a list of genes scaled by weights
@@ -110,3 +125,44 @@ class TissueScores():
         
         """
         return list(self.numeric_columns)
+
+    def random_genes(self, 
+                     n: int, 
+                     samples: int = 1_000, 
+                     keep_tissues: bool = False) -> np.ndarray:
+        """Create a random sample of weights
+
+        Args:
+            n (int): number of genes to include
+            samples (int, optional): number of random samples to compute. Defaults to 1000.
+            keep_tissues (bool, optional): If True, return results for all tissues. Defaults to False.
+
+        Returns:
+            np.ndarray: array of top scores as floats
+        
+        """
+        weights = [1]*n
+        return self.random_gene_weights(weights, samples, keep_tissues)
+
+    def random_gene_weights(self, 
+                            weights: Iterable[float], 
+                            samples: int = 1_000,
+                            keep_tissues: bool = False) -> np.ndarray:
+        """Create a random sample of weights
+
+        Args:
+            weights (Iterable[float]): weights of genes to apply
+            samples (int): number of random samples to compute
+            keep_tissues (bool, optional): If True, return results for all tissues. Defaults to False.
+
+        Returns:
+            np.ndarray: array of top scores as floats
+        
+        """
+        rdf = self.df.sample(n=len(weights)*samples, replace=True)[self.numeric_columns].values
+        rdf = rdf.transpose()*np.repeat(weights, samples)
+        tops = rdf.reshape((rdf.shape[0], len(weights), -1)).sum(axis=1)
+        if keep_tissues:
+            return tops
+        else:
+            return tops.max(axis=0)

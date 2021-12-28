@@ -93,5 +93,4 @@ def process_raw(raw_path: str, save_path: str):
     df = read_gct(raw_path)
     df = tpm_levels_to_edge_weights(df)
     df = simplify_titles(df)
-    df = combine_similar(df)
     save_transcripts(df, save_path)

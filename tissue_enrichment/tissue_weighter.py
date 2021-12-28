@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 
-pd.options.mode.chained_assignment = 'raise'
-
 
 def load(path: str = 'data/gene_median_tpm.csv') -> pd.DataFrame:
     """Load pre-computed edge weights
