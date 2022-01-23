@@ -25,9 +25,11 @@ Sugden Lab, Duquesne University, 2022
        'linc01598', 'snora71', 'linc01297', 'linc01422', 'elfn2'
 ```
 
-1. Check that different tissues are relatively equally distributed. See conclusion 1 below. Run script ```2_check_tissue_distances.py```
+1. ANALYSIS: Check that different tissues are relatively equally distributed. See conclusion 1 below. Run script ```2_check_tissue_distances.py```
 
 1. Create aliases for gene names from HUGO. Run script ```3_create_hugo_aliases.py```
+
+1. ANALYSIS: Check the relative distribution of transcripts in different tissues. Run script ```4_compare_tissue_gene_distributions.py```
 
 
 ### Library files
@@ -43,4 +45,16 @@ Sugden Lab, Duquesne University, 2022
 ### Pre-Analysis conclusions:
 1. Tissues show few clusters that might cause problems with ranking, with the exception perhaps of skin exposed and not exposed to the sun. Therefore, those two tissues are combined in ```tissue_scores_from_gct.py``` for all future analyses. ![image info](./graphs/tissue_umap.png)
 
-1. Testis shows overexpression and a massive number of unique genes (found from compare_tissue_gene_expression.py)
+1. Testis shows overexpression and a massive number of unique genes (found from compare_tissue_gene_expression.py). For example, see X-axes in adipose versus testis: 
+
+![image info](./graphs/gene_hist_20-adipose.subcutaneous.png) 
+![image info](./graphs/gene_hist_20-testis.png). 
+
+This is for 20 randomly sampled genes. If we include all of them, there is a bimodal distribution. 
+
+![image info](./graphs/gene_hist_all-testis.png). 
+
+We can compare the coefficients of log-normal fits to the histograms (orange lines) and we see that testis stands out radically.
+
+
+![image info](./graphs/gene_hist_all_lognormal_fits.png). 
