@@ -27,7 +27,6 @@ def read_hugo(path: str, ts: tscores.TissueScores) -> tuple[pd.DataFrame, pd.Dat
 
     # Exctract gene names from Gtex DB for merging
     gene_names = ts.df[['name', 'description']].rename(columns={'name': 'gtex_name', 'description': 'gtex_alias'})
-    gene_names['gtex_name'] = gene_names['gtex_name'].str.replace(r'\..*', '', regex=True)
     match = df.merge(gene_names['gtex_name'], how='inner', left_on='ensembl_gene_id', right_on='gtex_name')
 
     # Identify non-matching entries
