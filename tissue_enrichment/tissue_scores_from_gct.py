@@ -39,7 +39,7 @@ def tpm_levels_to_edge_weights(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def simplify_titles(df: pd.DataFrame) -> pd.DataFrame:
-    """Simplify column titles
+    """Simplify column titles of tissues
 
     Args:
         df (pd.DataFrame): input dataframe from gct
@@ -56,18 +56,17 @@ def simplify_titles(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def combine_similar(df: pd.DataFrame) -> pd.DataFrame:
-    """Combine overly similar tissues based on pre-analysis
+def fix_ensembl_titles(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove version numbers from ensembl titles
 
     Args:
-        df (pd.DataFrame): Input dataframe with simplified tissue names
+        df (pd.DataFrame): input dataframe with ensembl titles
 
     Returns:
-        pd.DataFrame: Output dataframe with overly similar tissues combined
-
+        pd.DataFrame: updated dataframe with corrected titles
+    
     """
-    df['skin'] = df[['skin.sun_exposed', 'skin.not_sun_exposed']].mean(axis=1)
-    df = df.drop(columns=['skin.sun_exposed', 'skin.not_sun_exposed'])
+    df['name'] = df['name'].str.replace(r'\..*', '', regex=True)
     return df
 
 
@@ -93,4 +92,5 @@ def process_raw(raw_path: str, save_path: str):
     df = read_gct(raw_path)
     df = tpm_levels_to_edge_weights(df)
     df = simplify_titles(df)
+    df = fix_ensembl_titles(df)
     save_transcripts(df, save_path)
