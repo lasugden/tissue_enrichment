@@ -67,7 +67,7 @@ def fix_ensembl_titles(df: pd.DataFrame) -> pd.DataFrame:
     
     """
     df['name'] = df['name'].str.replace(r'\..*', '', regex=True)
-    df.loc[df['description'].str.lower().duplicated(), 'description'] = ''
+    df.loc[df['description'].str.lower().duplicated(), 'description'] = pd.NA
     return df
 
 

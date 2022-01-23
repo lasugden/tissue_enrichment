@@ -49,10 +49,20 @@ class TissueScores():
             self.df = self.df.merge(pd.read_csv(info_path), how='left', on='ensembl_gene_id')
         else:
             self.aliases = (self.df[['gtex_alias', 'ensembl_gene_id']]
-                                .rename(columns={'gtex_alias': 'alias'}))
+                                .rename(columns={'gtex_alias': 'alias'})
+                                .dropna())
             self.aliases['alias'] = self.aliases['alias'].str.lower()
 
         self.numeric_columns = self.df.select_dtypes(exclude='object').columns.drop('tot_tpm')
+
+    def ids_and_aliases(self) -> pd.DataFrame:
+        """Return ensembl_gene_ids and aliases for integration with other datasets such as Hugo
+
+        Returns:
+            pd.DataFrame: A dataframe with two columns, ensembl_gene_id and gtex_alias
+        
+        """
+        return self.df[['ensembl_gene_id', 'gtex_alias']]
 
     def search(self, genes: list[str], raise_error: bool = False) -> tuple[list[str], list[str]]:
         """Search for a list of gene names

@@ -12,7 +12,7 @@ def read_hugo(path: str, ts: tscores.TissueScores) -> tuple[pd.DataFrame, pd.Dat
 
     Returns:
         tuple[pd.DataFrame, pd.DataFrame]: Dataframe of overlaps with hugo,
-                                           Dataframe of non-overlapping entries
+                                           Dataframe of non-overlapping entries found only in gtex
     """
     df = (pd.read_csv(path, delimiter='\t')
             .dropna(subset=['ensembl_gene_id']))
@@ -26,7 +26,7 @@ def read_hugo(path: str, ts: tscores.TissueScores) -> tuple[pd.DataFrame, pd.Dat
     df = pd.concat([df.loc[~dup_genes, :], dups]).reset_index(drop=True)
 
     # Exctract gene names from Gtex DB for merging
-    gene_names = ts.df[['name', 'description']].rename(columns={'name': 'gtex_name', 'description': 'gtex_alias'})
+    gene_names = ts.ids_and_aliases().rename(columns={'ensembl_gene_id': 'gtex_name'})
     match = df.merge(gene_names['gtex_name'], how='inner', left_on='ensembl_gene_id', right_on='gtex_name')
 
     # Identify non-matching entries
