@@ -10,7 +10,20 @@ Sugden Lab, Duquesne University, 2022
 
 1. Download ```Total Approved Symbols``` under ```Statistics``` in TXT format (the blue button in the right column at the bottom of the first block) from https://www.genenames.org/download/statistics-and-files/
 
-1. Convert raw data into an appropriate CSV format for reading. Run script ```1_process_raw_gct_to_graph.py```.
+1. Convert raw data into an appropriate CSV format for reading. Run script ```1_process_raw_gct_to_graph.py```. Note that duplicate alias names (not ensembl_gene_ids) will be dropped. This includes: 
+```'y_rna', 'snora63', 'metazoa_srp', 'u1', 'nbpf13p', 'snora44',
+       'rgs5', 'snora77', 'scarna20', 'prox1-as1', 'u3', 'snora51',
+       'linc01347', 'linc01115', 'snora2', 'uc_338', 'u4', 'linc01238',
+       'snora64', 'cyb561d2', 'snora4', 'snora48', 'aca64', 'snora31',
+       'rps23p5', 'snora70', 'snora67', '5s_rrna', 'snora40',
+       'raet1e-as1', 'snou13', 'snora22', 'snora15', 'mal2', 'snora12',
+       'lynx1', 'snora26', 'linc00484', 'u8', 'ctslp2', 'snora11',
+       'dnajc9-as1', 'snora19', 'snord22', 'alg1l9p', 'snora75',
+       'or7e47p', 'linc01481', 'snora9', 'spata13', 'snora27', 'snora42',
+       'snora32', 'snora79', 'golga8m', 'snora46', 'snora74', '7sk',
+       'snora21', 'scarna24', 'snou109', 'snora81', 'snora73', 'snora68',
+       'linc01598', 'snora71', 'linc01297', 'linc01422', 'elfn2'
+```
 
 1. Check that different tissues are relatively equally distributed. See conclusion 1 below. Run script ```2_check_tissue_distances.py```
 
