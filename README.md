@@ -45,16 +45,27 @@ Sugden Lab, Duquesne University, 2022
 ### Pre-Analysis conclusions:
 1. Tissues show few clusters that might cause problems with ranking, with the exception perhaps of skin exposed and not exposed to the sun. Therefore, those two tissues are combined in ```tissue_scores_from_gct.py``` for all future analyses. ![image info](./graphs/tissue_umap.png)
 
-1. Testis shows overexpression and a massive number of unique genes (found from compare_tissue_gene_expression.py). For example, see X-axes in adipose versus testis: 
+1. Testis shows overexpression and a massive number of unique genes (found from compare_tissue_gene_expression.py). 
 
-![image info](./graphs/gene_hist_20-adipose.subcutaneous.png) 
-![image info](./graphs/gene_hist_20-testis.png). 
+    - For example, see X-axes in adipose versus testis: 
 
-This is for 20 randomly sampled genes. If we include all of them, there is a bimodal distribution. 
+    ![image info](./graphs/gene_hist_20-adipose.subcutaneous.png) 
+    ![image info](./graphs/gene_hist_20-testis.png)
 
-![image info](./graphs/gene_hist_all-testis.png). 
+    - This is for 20 randomly sampled genes. If we include all of them, there is a bimodal distribution. 
 
-We can compare the coefficients of log-normal fits to the histograms (orange lines) and we see that testis stands out radically.
+    ![image info](./graphs/gene_hist_all-testis.png)
 
+    - We can compare the coefficients of log-normal fits to the histograms (orange lines) and we see that testis stands out radically.
 
-![image info](./graphs/gene_hist_all_lognormal_fits.png). 
+    ![image info](./graphs/gene_hist_all_lognormal_fits.png)
+
+    - Furthermore, there are almost 4000 genes that are uniquely found in the testis.
+
+    ![image info](./graphs/tissue_unique_genes.png)
+
+    - Tissue expression in testis is extremely different from a randomly selected tissue, pituitary, while pituitary and another randomly selected tissue, bladder, are similar
+
+    ![image info](./graphs/tissue_expression_testis_pituitary_all.png)
+    ![image info](./graphs/tissue_expression_bladder_pituitary_all.png)
+

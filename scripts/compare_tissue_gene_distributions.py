@@ -182,6 +182,29 @@ def confirm_y_testis_transcripts(ts: tscores.TissueScores) -> float:
     return subdf.iloc[0]
 
 
+def compare_testis_versus_reference_expression(ts: tscores.TissueScores, 
+                                               save_path: str, 
+                                               main_tissue: str = 'testis', 
+                                               ref_tissue: str = 'pituitary',
+                                               all: bool = False):
+    """Plot testis versus reference tissue to look for global inflation
+
+    Args:
+        ts (tscores.TissueScores): the raw data
+        save_path (str): the path into which scatterplot should be saved
+        main_tissue (str, optional): tissue in question. Defaults to 'testis'.
+        ref_tissue (str, optional): a particular reference tissue. Defaults to 'pituitary'.
+        all (bool, optional): if True, show all genes. Defaults to False.
+    
+    """
+    df = ts.random_genes_across_tissues(tissues=[main_tissue, ref_tissue], all=all)
+    df.plot.scatter(x=main_tissue, y=ref_tissue, alpha=(0.05 if all else 0.4))
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.plot([0.00001, 1], [0.00001, 1])
+    plt.savefig(os.path.join(save_path, f'tissue_expression_{main_tissue}_{ref_tissue}_{"all" if all else "1000"}.pdf'))
+
+
 if __name__ == '__main__':
     ts = tscores.load(alias=False)
     # compare_tissue_gene_dists(ts, 'graphs')
@@ -189,4 +212,7 @@ if __name__ == '__main__':
     # compare_tissue_gene_dists_all(ts, 'graphs')
     # plot_best_lognorm_fits_all(ts, 'graphs')
     # plot_unique_genes_in_tissues(ts, 'graphs')
-    confirm_y_testis_transcripts(ts)
+    # confirm_y_testis_transcripts(ts)
+    # compare_testis_versus_reference_expression(ts, 'graphs', all=True)
+    compare_testis_versus_reference_expression(ts, 'graphs', all=True, main_tissue='bladder')
+

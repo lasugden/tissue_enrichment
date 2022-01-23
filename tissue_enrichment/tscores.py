@@ -55,15 +55,6 @@ class TissueScores():
 
         self.numeric_columns = self.df.select_dtypes(exclude='object').columns.drop('tot_tpm')
 
-    def ids_and_aliases(self) -> pd.DataFrame:
-        """Return ensembl_gene_ids and aliases for integration with other datasets such as Hugo
-
-        Returns:
-            pd.DataFrame: A dataframe with two columns, ensembl_gene_id and gtex_alias
-        
-        """
-        return self.df[['ensembl_gene_id', 'gtex_alias']]
-
     def search(self, genes: list[str], raise_error: bool = False) -> tuple[list[str], list[str]]:
         """Search for a list of gene names
 
@@ -200,29 +191,29 @@ class TissueScores():
         real['pvalue'] = real['score'].apply(lambda x: (rand > x).sum()/samples)
         return real
 
-    def optimal_tissue(self,
-                       gene_weights: list[tuple[str, float]],
-                       samples: int = 1_0000,
-                       within_group: bool = True,
-                       raise_error: bool = False):
+    # def optimal_tissue(self,
+    #                    gene_weights: list[tuple[str, float]],
+    #                    samples: int = 1_0000,
+    #                    within_group: bool = True,
+    #                    raise_error: bool = False):
 
-        real = self.gene_weights(gene_weights, raise_error=raise_error).rename('score').to_frame()
-        real['inv_rank'] = 1.0/(np.arange(len(real)) + 1)
-        tissue_scores = [real['score'].iloc[0]]
+    #     real = self.gene_weights(gene_weights, raise_error=raise_error).rename('score').to_frame()
+    #     real['inv_rank'] = 1.0/(np.arange(len(real)) + 1)
+    #     tissue_scores = [real['score'].iloc[0]]
 
-        gw = self._last_gw
-        while len(gw) > 1:
-            subdf = gw.merge(self.df, how='left', on='ensembl_gene_id')
-            subdf.loc[:, self.numeric_columns] = subdf[self.numeric_columns].multiply(subdf['weight'], axis=0)*real['inv_rank']
-            subdf['gene_tissue_score'] = subdf[self.numeric_columns].sum(axis=1)
+    #     gw = self._last_gw
+    #     while len(gw) > 1:
+    #         subdf = gw.merge(self.df, how='left', on='ensembl_gene_id')
+    #         subdf.loc[:, self.numeric_columns] = subdf[self.numeric_columns].multiply(subdf['weight'], axis=0)*real['inv_rank']
+    #         subdf['gene_tissue_score'] = subdf[self.numeric_columns].sum(axis=1)
             
-            gw = gw.drop(subdf['gene_tissue_score'].idxmin()).reset_index(drop=True)
-            real = self._gene_weights_df(gw).rename('score').to_frame()
-            real['inv_rank'] = 1.0/(np.arange(len(real)) + 1)
-            tissue_scores.append(real['score'].iloc[0])
+    #         gw = gw.drop(subdf['gene_tissue_score'].idxmin()).reset_index(drop=True)
+    #         real = self._gene_weights_df(gw).rename('score').to_frame()
+    #         real['inv_rank'] = 1.0/(np.arange(len(real)) + 1)
+    #         tissue_scores.append(real['score'].iloc[0])
 
-        subdf = self.df.merge(gene_df, how='inner', on='ensembl_gene_id')
-        print(1)
+    #     subdf = self.df.merge(gene_df, how='inner', on='ensembl_gene_id')
+    #     print(1)
 
     def feature_matrix(self) -> np.ndarray:
         """Return a feature matrix
@@ -241,6 +232,32 @@ class TissueScores():
         
         """
         return list(self.numeric_columns)
+
+    def ids_and_aliases(self) -> pd.DataFrame:
+        """Return ensembl_gene_ids and aliases for integration with other datasets such as Hugo
+
+        Returns:
+            pd.DataFrame: A dataframe with two columns, ensembl_gene_id and gtex_alias
+        
+        """
+        return self.df[['ensembl_gene_id', 'gtex_alias']]
+
+    def random_genes_across_tissues(self, n: int = 1000, tissues: Iterable[str] = ('testis', 'pituitary'), all: bool = False) -> pd.DataFrame:
+        """Randomly sample genes for specific tissues
+
+        Args:
+            n (int, optional): Number of genes to sample. Defaults to 1000.
+            tissues (Iterable[str], optional): List of tissues to return. Defaults to ('testis', 'pituitary').
+            all (bool, optional): if True, show all genes. Defaults to False.
+
+        Returns:
+            pd.DataFrame: Dataframe containing columns of the names of tissues
+        
+        """
+        if all:
+            return self.df[tissues]
+        else:
+            return self.df[tissues].sample(n)
 
     def random_genes(self, 
                      n: int, 
