@@ -178,7 +178,7 @@ def confirm_y_testis_transcripts(ts: tscores.TissueScores) -> float:
     unique_genes = (subdf['testis'] > 0.99).sum()
 
     print(subdf)
-    print(f'Y chromosome genes make are unique in {unique_genes}/{found_genes} cases')
+    print(f'Y chromosome genes are unique in {unique_genes}/{found_genes} cases')
     return subdf.iloc[0]
 
 
