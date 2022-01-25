@@ -1,4 +1,5 @@
 from __future__ import annotations
+import enum
 import numpy as np
 import pandas as pd
 from typing import Iterable, Union
@@ -23,7 +24,7 @@ class TissueScores():
     def __init__(self, 
                  path: str = 'data/gene_median_tpm.csv', 
                  combine_skin: bool = True,
-                 alias: bool = True,
+                 hugo_aliases: bool = True,
                  alias_path: str = 'data/idx.csv',
                  info_path: str = 'data/locus_group.csv'):
         """Load in tissue scores/pre-computed edge weights
@@ -31,7 +32,7 @@ class TissueScores():
         Args:
             path (str, optional): Path to existing tissue scores. Defaults to 'data/gene_median_tpm.csv'.
             combine_skin (bool, optional): If True, combine two skin tissues as identified in pre-analysis
-            alias (bool, optional): If True, load aliases. Defaults to True.
+            hugo_aliases (bool, optional): If True, load aliases. Defaults to True.
             alias_path (str, optional): Location of the preprocessed Hugo alias dataframe
             info_path (str, optional): Location of the preprocessed Hugo locus group dataframe
 
@@ -44,7 +45,7 @@ class TissueScores():
             self.df['skin'] = self.df[['skin.sun_exposed', 'skin.not_sun_exposed']].mean(axis=1)
             self.df = self.df.drop(columns=['skin.sun_exposed', 'skin.not_sun_exposed'])
 
-        if alias:
+        if hugo_aliases:
             self.aliases = pd.read_csv(alias_path)
             self.df = self.df.merge(pd.read_csv(info_path), how='left', on='ensembl_gene_id')
         else:
@@ -232,6 +233,21 @@ class TissueScores():
         
         """
         return list(self.numeric_columns)
+
+    def tissue_distances(self) -> np.ndarray:
+        """Return the Euclidean distances between each pair of tissues as a matrix in order of tissues function
+
+        Returns:
+            np.ndarray: tissue x tissue matrix of distances
+        
+        """
+        out = np.ones((len(self.numeric_columns), len(self.numeric_columns)))
+        for i, tissue1 in enumerate(self.numeric_columns):
+            for j, tissue2 in enumerate(self.numeric_columns[i + 1:]):
+                out[i, j] = np.linalg.norm(self.df[tissue1].values*self.df['tot_tpm'].values - 
+                                           self.df[tissue2].values*self.df['tot_tpm'].values)
+                out[j, i] = out[i, j]
+        return out
 
     def ids_and_aliases(self) -> pd.DataFrame:
         """Return ensembl_gene_ids and aliases for integration with other datasets such as Hugo

@@ -36,7 +36,7 @@ def tissue_p(ts: tscores.TissueScores,
 
 
 if __name__ == '__main__':
-    ts = tscores.load(alias=False)
+    ts = tscores.load(hugo_aliases=False)
     tw.tissues_by_weight([('hla-a', 0.5), 
                           ('hla-b', 0.6),
                           ('hla-c', 1), 

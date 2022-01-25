@@ -31,6 +31,8 @@ Sugden Lab, Duquesne University, 2022
 
 1. ANALYSIS: Check the relative distribution of transcripts in different tissues. Run script ```4_compare_tissue_gene_distributions.py```
 
+1. FAILED ANALYSIS: Tried to represent tissues in a 2d graph, but dimensionality reduction is too variable. Script ```tissue_tissue_network.py```
+
 
 ### Library files
 ```gene_alias_from_hugo.py```: Read in Hugo data, combine aliases, and create an index that can be searched to identify the best matching ensembl_gene_id.
@@ -39,7 +41,7 @@ Sugden Lab, Duquesne University, 2022
 
 ```tissue_scores_from_gct.py```: Code to read GTEX file to get gene transcript levels, convert to a graph, and simplify titles for future processing. Also standardizes edges.
 
-```tscores.py```: Class to read in GTEX edge weights as well as hugo files for searching. Also includes code for randomization of statistics.
+```tscores.py```: Class to read in GTEX edge weights as well as hugo files for searching. Also includes code for randomization of statistics. NOTE: Pass in the rank file to use ranks rather than normalized gene expression levels.
 
 
 ### Pre-Analysis conclusions:
@@ -69,3 +71,4 @@ Sugden Lab, Duquesne University, 2022
     ![image info](./graphs/tissue_expression_testis_pituitary_all.png)
     ![image info](./graphs/tissue_expression_bladder_pituitary_all.png)
 
+1. NOTE: Go back and think about rare transcripts. Perhaps scale by expression level?

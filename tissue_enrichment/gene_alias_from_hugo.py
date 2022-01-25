@@ -106,7 +106,7 @@ def save_idx_lgroup(idx: pd.DataFrame,
 
 if __name__ == '__main__':
     import os.path
-    ts = tscores.TissueScores(alias=False)
+    ts = tscores.TissueScores(hugo_aliases=False)
 
     match, non_match = read_hugo(os.path.join('data', 'non_alt_loci_set.txt'), ts)
     idx = create_idx(match, non_match)

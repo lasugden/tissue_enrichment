@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import re
 
@@ -71,6 +72,25 @@ def fix_ensembl_titles(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def convert_to_rank(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert tissue expression to rank 
+
+    Args:
+        df (pd.DataFrame): normalized tissue scores per tissue
+
+    Returns:
+        pd.DataFrame: updated dataframe with rank rather than score
+    
+    """
+    numeric_columns = df.select_dtypes(exclude='object').columns.drop('tot_tpm')
+    for col in numeric_columns:
+        arr = df[col].argsort()
+        ranks = np.empty_like(arr)
+        ranks[arr] = np.arange(len(arr)).astype(float)/len(arr)
+        df[col] = ranks
+    return df
+
+
 def save_transcripts(df: pd.DataFrame, path: str):
     """Save outputs for efficient reading by backend
 
@@ -82,12 +102,13 @@ def save_transcripts(df: pd.DataFrame, path: str):
     df.to_csv(path, index=None)
 
 
-def process_raw(raw_path: str, save_path: str):
+def process_raw(raw_path: str, save_path: str, rank_path: str):
     """Process raw data and save
 
     Args:
         raw_path (str): raw path to gct file
         save_path (str): path to save data into, usually in data directory in tissue_enrichment repo
+        rank_path (str): path to save rank data into, usually in data directory in tissue_enrichment repo
     
     """
     df = read_gct(raw_path)
@@ -95,3 +116,5 @@ def process_raw(raw_path: str, save_path: str):
     df = simplify_titles(df)
     df = fix_ensembl_titles(df)
     save_transcripts(df, save_path)
+    convert_to_rank(df)
+    save_transcripts(df, rank_path)

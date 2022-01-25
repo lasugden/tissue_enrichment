@@ -206,13 +206,11 @@ def compare_testis_versus_reference_expression(ts: tscores.TissueScores,
 
 
 if __name__ == '__main__':
-    ts = tscores.load(alias=False)
-    # compare_tissue_gene_dists(ts, 'graphs')
-    # plot_best_lognorm_fits(ts, 'graphs')
-    # compare_tissue_gene_dists_all(ts, 'graphs')
-    # plot_best_lognorm_fits_all(ts, 'graphs')
-    # plot_unique_genes_in_tissues(ts, 'graphs')
-    # confirm_y_testis_transcripts(ts)
-    # compare_testis_versus_reference_expression(ts, 'graphs', all=True)
+    ts = tscores.load(hugo_aliases=False)
+    compare_tissue_gene_dists_all(ts, 'graphs')
+    plot_best_lognorm_fits_all(ts, 'graphs')
+    plot_unique_genes_in_tissues(ts, 'graphs')
+    confirm_y_testis_transcripts(ts)
+    compare_testis_versus_reference_expression(ts, 'graphs', all=True)
     compare_testis_versus_reference_expression(ts, 'graphs', all=True, main_tissue='bladder')
 
